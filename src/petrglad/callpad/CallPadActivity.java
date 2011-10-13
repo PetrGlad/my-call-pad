@@ -1,5 +1,6 @@
 package petrglad.callpad;
 
+import android.R.drawable;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -42,7 +43,8 @@ public class CallPadActivity extends ListActivity {
         final String phoneNo = callItem.phoneNo;
         new AlertDialog.Builder(this)
                 .setTitle("Confirm call")
-                .setMessage("Call " + phoneNo)
+                .setIcon(drawable.ic_menu_call)
+                .setMessage(phoneNo)
                 .setPositiveButton("Call", new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
