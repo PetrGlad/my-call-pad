@@ -30,7 +30,6 @@ public class CallPadActivity extends ListActivity {
                 null, null);
 
         listAdapter = new CallListAdapter(this, query);
-
         setListAdapter(listAdapter);
         registerForContextMenu(getListView());
     }
@@ -49,11 +48,11 @@ public class CallPadActivity extends ListActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Log.v(getClass().getName(), "call clicked " + id + ", phoneNo " + phoneNo);
                         startActivity(new Intent(
-                                "android.intent.action.DIAL",
+                                Intent.ACTION_CALL,
                                 Uri.fromParts("tel", phoneNo, "")));
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(android.R.string.cancel, null)
                 .create()
                 .show();
     }
