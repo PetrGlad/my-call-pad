@@ -12,6 +12,6 @@
 <TextView android:id="@android:id/empty"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:text="Empty set"
+         android:text="@string/empty_call_list_msg"         
          />
 </LinearLayout>

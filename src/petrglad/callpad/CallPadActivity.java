@@ -42,7 +42,7 @@ public class CallPadActivity extends ListActivity {
         final CallItem callItem = (CallItem) l.getAdapter().getItem(position);
         final String phoneNo = callItem.phoneNo;
         new AlertDialog.Builder(this)
-                .setTitle("Confirm call")
+                .setTitle(R.string.confirm_call)
                 .setIcon(drawable.ic_menu_call)
                 .setMessage(phoneNo)
                 .setPositiveButton("Call", new OnClickListener() {
