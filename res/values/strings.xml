@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>    
+<resources>
     <string name="app_name" translatable="false">CallPad</string>
+    <string name="empty_call_list_msg">Call history is empty.\nMake some calls with default phone app.</string>
+    <string name="confirm_call">Confirm call</string>
 </resources>

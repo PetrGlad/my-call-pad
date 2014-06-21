@@ -1,54 +1,27 @@
 package petrglad.callpad;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
-import android.database.Cursor;
-import android.provider.CallLog;
+import android.telephony.PhoneNumberUtils;
+import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.util.List;
+import java.util.Locale;
+
 public class CallListAdapter extends BaseAdapter {
 
+    public static final String PREFIX_RU = "+7";
     private final List<CallItem> callList;
 
     private final Context context;
 
-    public CallListAdapter(Context context, Cursor data) {
+    public CallListAdapter(Context context, List<CallItem> data) {
         this.context = context;
-        this.callList = filterCalls(data);
-    }
-
-    private List<CallItem> filterCalls(Cursor data) {
-        // Oh, Java, you're so painfully verbose.
-
-        final Map<String, Integer> numbers = new HashMap<String, Integer>();
-        final List<CallItem> result = new ArrayList<CallItem>(20);
-        boolean hasMore = data.moveToFirst();
-        while (hasMore) {
-            final String number = data.getString(data.getColumnIndex(CallLog.Calls.NUMBER));
-            final String name = data.getString(data.getColumnIndex(CallLog.Calls.CACHED_NAME));
-            final Integer cnt = numbers.get(number);
-            numbers.put(number, cnt == null ? 1 : cnt + 1);
-            if (cnt == null)
-                result.add(new CallItem(name, number));
-            hasMore = data.moveToNext();
-        }
-        Collections.sort(result, new Comparator<CallItem>() {
-            @Override
-            public int compare(CallItem a, CallItem b) {
-                return numbers.get(b.phoneNo) - numbers.get(a.phoneNo);
-            }
-        });
-        return result;
+        this.callList = data;
     }
 
     @Override
@@ -70,20 +43,32 @@ public class CallListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder views;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_2,
-                    null);
+            convertView = LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_2, null);
             views = new ViewHolder();
             views.name = (TextView) convertView.findViewById(android.R.id.text1);
             views.phone = (TextView) convertView.findViewById(android.R.id.text2);
             convertView.setTag(views);
-        } else
+        } else {
             views = (ViewHolder) convertView.getTag();
+        }
 
         final CallItem callItem = callList.get(position);
         views.name.setText(callItem.name);
-        views.phone.setText(callItem.phoneNo);
-
+        views.phone.setText(formatNumber(callItem));
         return convertView;
+    }
+
+    private String formatNumber(CallItem callItem) {
+        // Only north american numbers formatting is supported by Android
+        if (callItem.phoneNo.startsWith(PREFIX_RU)) {
+            // The NANP is also usable for Russia, reuse it
+            final SpannableStringBuilder text =
+                    new SpannableStringBuilder(callItem.phoneNo.substring(PREFIX_RU.length()));
+            PhoneNumberUtils.formatNanpNumber(text);
+            return PREFIX_RU + " " + text.toString();
+        } else {
+            return PhoneNumberUtils.formatNumber(callItem.phoneNo);
+        }
     }
 
     private static class ViewHolder {
